@@ -83,6 +83,7 @@ public class file_hash {
         for(int j = 0; j < fs.length; j++) {
         	printfliehash(fs[j].getPath());
         }
+        printfolderhash(path);
     }
     
     public static void printfliehash(String path) {
@@ -102,6 +103,20 @@ public class file_hash {
             e.printStackTrace();
         }
     }
+    
+    
+    public static String folderhash(String path) throws Exception {
+    	File dir = new File(path);
+        File[] fs = sort(dir.listFiles());
+        FileInputStream is = new FileInputStream(dir);
+        byte[] sha1 = SHA1Checksum(is);
+
+        String result = "";
+        for (int i = 0; i < sha1.length; i++) {
+            result += Integer.toString(sha1[i], 16);
+        }
+    	return result;
+    }
    
 
     
@@ -117,10 +132,48 @@ public class file_hash {
     	return result;
     }
     
+    public static byte[] folderSHA1Checksum(String path) throws Exception {
+    	byte[] buffer = new byte[1024];    
+        MessageDigest complete = MessageDigest.getInstance("SHA-1");
+        int numRead;
+        File dir = new File(path);
+        File[] fs = sort(dir.listFiles());
+        
+        for(int i = 0; i < fs.length; i++) {
+            if(fs[i].isFile()) {
+                FileInputStream is = new FileInputStream(fs[i]);
+                numRead = is.read(buffer);
+                
+            }
+       
+        
+        }
+        return complete.digest();
+    }
+    
+    public static void printfolderhash(String path) {
+    	byte[] sha1;
+		try {
+			sha1 = folderSHA1Checksum(path);
+			String result = "";
+	        for (int i = 0; i < sha1.length; i++) {
+	            result += Integer.toString(sha1[i], 16);
+	        }
+	        System.out.print("文件夹");
+	        System.out.print(path.toString());
+	        System.out.print("的hash值是");
+	        System.out.println(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     
     public static void main(String[] args) {
         try {
-            dfs("/Users/jiapeitong/Desktop/未命名文件夹 2");
+            dfs("/Users/jiapeitong/Desktop/未命名文件夹 3");
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
